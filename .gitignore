@@ -1,0 +1,12 @@
+
+target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+*.war
+*.original
+target/my-api-1.0.0-SNAPSHOT/WEB-INF/classes/application.properties
+*.jar
+*.class
+target/my-api-1.0.0-SNAPSHOT/WEB-INF/classes/logback-spring.xml
+target/maven-archiver/pom.properties
+target/classes/logback-spring.xml
+target/classes/application.properties
