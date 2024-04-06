@@ -73,7 +73,7 @@ public class MemberController {
 //            @ApiResponse(code=404, message="找不到資料"),
             @ApiResponse(code=401, message="無法授權"),
     })
-    @GetMapping("/member")
+    @GetMapping("/members")
     public Iterable<Member> getAll(
             HttpServletResponse response) throws Exception {
         try{
