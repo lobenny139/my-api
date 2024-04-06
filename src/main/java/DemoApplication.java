@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Import({
 		// swagger config@local
 		com.my.api.config.SwaggerConfig.class,
+
 		// config@tom-db-service
 		com.my.db.config.EntityServiceConfig.class,
 })
@@ -15,10 +16,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan	(basePackages = {
 		// controller@local
 		"com.my.api.controller",
+
 		// aop@local
 		"com.my.api.aop",
-		// aop@imbidgod-db-service
-		"com.imbidgod.db.service.aop",
+
+		// aop@my-db-service
+		"com.my.db.service.aop",
+
 		// table access service@tom-db-service
 		"com.my.db.service.provider" ,
 })
@@ -32,7 +36,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		// entity@my-db-entity
 		"com.my.db.entity"
 })
-
 @SpringBootApplication
 public class DemoApplication {
 	public static void main(String[] args) {
