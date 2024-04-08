@@ -10,3 +10,4 @@ target/my-api-1.0.0-SNAPSHOT/WEB-INF/classes/logback-spring.xml
 target/maven-archiver/pom.properties
 target/classes/logback-spring.xml
 target/classes/application.properties
+*.iml
