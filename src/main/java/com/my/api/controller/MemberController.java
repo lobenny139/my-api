@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,16 +19,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
+
 @Getter
 @Setter
 @RestController
 @Api(tags = "Member Table 操作", value = "Member Table 操作 API 說明")
 public class MemberController {
-    private static Logger logger = LoggerFactory.getLogger(MemberController.class);
-    @Autowired(required=true)
 
+    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
+
+    @Autowired(required=true)
     @Qualifier("memberService")
     IMemberService service;
+
+    @Autowired
+    private PasswordEncoder bcryptEncoder;
 
     @ApiOperation(value="以 Member 的 account 取出單一物件(Member)")
     @ApiResponses(value={
@@ -117,6 +123,9 @@ public class MemberController {
             HttpServletResponse response) throws Exception {
         try {
             entity.setCreateBy( null == entity.getCreateBy() ? "System" : entity.getCreateBy()   );
+
+            entity.setPassword(bcryptEncoder.encode(entity.getPassword()));
+
             entity.setCreateDate(new Date());
             return getService().createEntity(entity);
         }catch(EntityNotFoundException e){

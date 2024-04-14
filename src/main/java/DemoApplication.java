@@ -9,8 +9,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		// swagger config@local
 		com.my.api.config.SwaggerConfig.class,
 
+		// jwt config@my-jwt
+		com.my.jwt.config.WebSecurityConfig.class,
+
 		// config@tom-db-service
 		com.my.db.config.EntityServiceConfig.class,
+
 })
 
 @ComponentScan	(basePackages = {
@@ -20,11 +24,20 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		// aop@local
 		"com.my.api.aop",
 
+		//Jwt@local
+		"com.my.jwt.service",
+
+		// JWT@local
+		"com.my.jwt",
+
 		// aop@my-db-service
 		"com.my.db.service.aop",
 
-		// table access service@tom-db-service
+		// table access service@my-db-service
 		"com.my.db.service.provider" ,
+
+		// father class table access service@my-db-access-tool
+//		"com.my.db.access.tool"
 })
 
 @EnableJpaRepositories(
