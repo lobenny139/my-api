@@ -1,7 +1,5 @@
 package com.my.api.controller;
 
-import com.my.db.entity.Member;
-import com.my.db.exception.*;
 import com.my.redis.service.IRedisService;
 import io.swagger.annotations.*;
 import lombok.Getter;
