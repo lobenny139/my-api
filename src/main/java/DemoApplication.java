@@ -12,8 +12,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		// jwt config@my-jwt
 		com.my.jwt.config.WebSecurityConfig.class,
 
-		// config@tom-db-service
+		// config@my-db-service
 		com.my.db.config.EntityServiceConfig.class,
+		//config@redis
+		com.my.redis.config.RedisConfig.class,
+		com.my.redis.config.RedisServiceConfig.class,
+		com.my.redis.config.RedisMessageConfig.class
 
 })
 
@@ -35,6 +39,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 		// table access service@my-db-service
 		"com.my.db.service.provider" ,
+
+		// service@my-redis-service
+		"com.my.redis.service.provider"
+
 
 		// father class table access service@my-db-access-tool
 //		"com.my.db.access.tool"
