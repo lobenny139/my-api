@@ -36,7 +36,7 @@ public class SendRedisMessageController {
     })
     @GetMapping("/redis/{topic}/send/{message}")
     public void send(
-                        @ApiParam(required=true, value="請傳入topic")
+                        @ApiParam(required=true, value="請傳入topic", defaultValue = "demoChannel")
                         @PathVariable String topic,
                         @ApiParam(required=true, value="請傳入訊息")
                         @PathVariable String message,
