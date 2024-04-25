@@ -53,11 +53,14 @@ public class ValidateController {
         final UserDetails userDetails = getUserDetailsService().loadUserByUsername(jwtRequest.getAccount());
         final String token = getJwtTokenUtil().generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponse(token));
+//        return ResponseEntity.ok(new JwtResponse(null));
     }
 
     private void authenticate(String account, String password) throws Exception {
         try {
-            getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(account, password));
+            getAuthenticationManager().authenticate(
+                    new UsernamePasswordAuthenticationToken(account, password)
+            );
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
