@@ -112,7 +112,7 @@ public class MemberController {
             @ApiResponse(code=200, message="請求成功"),
             @ApiResponse(code=400, message="請求失敗"),
 //          @ApiResponse(code=404, message="找不到資料"),
-            @ApiResponse(code=409, message="找不到資料"),
+            @ApiResponse(code=409, message="資料衝突"),
             @ApiResponse(code=401, message="無法授權"),
     })
     @PostMapping("/member")
