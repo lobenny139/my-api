@@ -5,6 +5,7 @@ import com.my.db.exception.*;
 import com.my.db.service.IMemberService;
 import com.my.jwt.JwtTokenUtil;
 import io.swagger.annotations.*;
+import lombok.Delegate;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ import java.util.Date;
 @Getter
 @Setter
 @RestController
-@Api(tags = "Member Table 操作", value = "Member Table 操作 API 說明")
+@Api(tags = "Member 操作", value = "Member 操作 API 說明")
 public class MemberController {
 
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
@@ -40,18 +41,18 @@ public class MemberController {
     private JwtTokenUtil jwtTokenUtil;
 
 
-    @ApiOperation(value="以 Member 的 account 取出單一物件(Member)")
+    @ApiOperation(value="取出一物件(Member)")
     @ApiResponses(value={
             @ApiResponse(code=200, message="請求成功"),
             @ApiResponse(code=400, message="請求失敗"),
-            @ApiResponse(code=404, message="找不到資料"),
             @ApiResponse(code=401, message="無法授權"),
+            @ApiResponse(code=404, message="找不到資料")
+//          @ApiResponse(code=409, message="資料衝突")
     })
     @GetMapping("/member/{account}")
     public Member get(
-            @ApiParam(required=true, value="請傳入物件(member)的 account")
-            @PathVariable String account,
-            HttpServletResponse response) throws Exception {
+                        @ApiParam(required=true, value="請傳入物件(member)的 account")
+                        @PathVariable String account) throws Exception {
         try{
             return getService().getEntityByAccount(account);
         }catch(EntityNotFoundException e){
@@ -77,16 +78,56 @@ public class MemberController {
         }
     }
 
+
+    @ApiOperation(value="刪除一物件(Member)")
+    @ApiResponses(value={
+            @ApiResponse(code=200, message="請求成功"),
+            @ApiResponse(code=400, message="請求失敗"),
+            @ApiResponse(code=401, message="無法授權")
+//            @ApiResponse(code=404, message="找不到資料")
+//          @ApiResponse(code=409, message="資料衝突")
+    })
+    @DeleteMapping("/member/{account}")
+    public Member delete(
+                            @ApiParam(required=true, value="請傳入物件(member)的 account")
+                            @PathVariable String account) throws Exception {
+        try{
+            return getService().getEntityByAccount(account);
+        }catch(EntityNotFoundException e){
+            //404
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(DataException e) {
+            //409
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(DuplicatedException e){
+            //409
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(SQLGrammerConflictException e){
+            //406
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+        }catch(UnSupportException e){
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+
     @ApiOperation(value="取出所有物件(Member)")
     @ApiResponses(value={
             @ApiResponse(code=200, message="請求成功"),
             @ApiResponse(code=400, message="請求失敗"),
-//            @ApiResponse(code=404, message="找不到資料"),
             @ApiResponse(code=401, message="無法授權"),
+//          @ApiResponse(code=404, message="找不到資料"),
+//          @ApiResponse(code=409, message="資料衝突")
+
     })
     @GetMapping("/members")
-    public Iterable<Member> getAll(
-            HttpServletResponse response) throws Exception {
+    public Iterable<Member> getAll() throws Exception {
         try{
             return getService().getAllEntities();
         }catch(EntityNotFoundException e){
@@ -112,29 +153,25 @@ public class MemberController {
         }
     }
 
-    @ApiOperation(value="新增單一物件(Member)")
+    @ApiOperation(value="新增一物件(Member)")
     @ApiResponses(value={
             @ApiResponse(code=200, message="請求成功"),
             @ApiResponse(code=400, message="請求失敗"),
-//          @ApiResponse(code=404, message="找不到資料"),
-            @ApiResponse(code=409, message="資料衝突"),
             @ApiResponse(code=401, message="無法授權"),
+//          @ApiResponse(code=404, message="找不到資料"),
+            @ApiResponse(code=409, message="資料衝突")
     })
     @PostMapping("/member")
     public Member create(
-            @ApiParam(required=true, value="請傳入物件(Member)的 JSON 格式")
-            @RequestBody(required=true) Member entity,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                            @ApiParam(required=true, value="請傳入物件(Member)的 JSON 格式")
+                            @RequestBody(required=true) Member entity,
+                            HttpServletRequest request) throws Exception {
         try {
-//            entity.setCreateBy( null == entity.getCreateBy() ? "System" : entity.getCreateBy()   );
-
             String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
             entity.setCreateBy( currentUser );
 
             entity.setPassword(bcryptEncoder.encode(entity.getPassword()));
 
-            entity.setCreateDate(new Date());
             return getService().createEntity(entity);
         }catch(EntityNotFoundException e){
             //404
@@ -158,6 +195,50 @@ public class MemberController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
+
+    @ApiOperation(value="更新一物件(Member)")
+    @ApiResponses(value={
+            @ApiResponse(code=200, message="請求成功"),
+            @ApiResponse(code=400, message="請求失敗"),
+            @ApiResponse(code=401, message="無法授權"),
+            @ApiResponse(code=404, message="找不到資料"),
+            @ApiResponse(code=409, message="資料衝突")
+    })
+    @PutMapping("member/{account}")
+    public Member update(
+                            @ApiParam(required=true, value="請傳入物件(member)的account")
+                            @PathVariable String account,
+                            @ApiParam(required=true, value="請傳入物件(member)的 JSON 格式")
+                            @RequestBody(required=true) Member entity,
+                            HttpServletRequest request) {
+        try{
+            String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
+            entity.setUpdateBy(currentUser);
+            return getService().updateEntityByAccount(account, entity);
+        }catch(EntityNotFoundException e){
+            //404
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(DataException e) {
+            //409
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(DuplicatedException e){
+            //409
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(SQLGrammerConflictException e){
+            //406
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+        }catch(UnSupportException e){
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
 
 
 }
