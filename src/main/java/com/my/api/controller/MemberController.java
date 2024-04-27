@@ -3,6 +3,7 @@ package com.my.api.controller;
 import com.my.db.entity.Member;
 import com.my.db.exception.*;
 import com.my.db.service.IMemberService;
+import com.my.jwt.JwtTokenUtil;
 import io.swagger.annotations.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +35,10 @@ public class MemberController {
 
     @Autowired
     private PasswordEncoder bcryptEncoder;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
 
     @ApiOperation(value="以 Member 的 account 取出單一物件(Member)")
     @ApiResponses(value={
@@ -122,7 +127,10 @@ public class MemberController {
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         try {
-            entity.setCreateBy( null == entity.getCreateBy() ? "System" : entity.getCreateBy()   );
+//            entity.setCreateBy( null == entity.getCreateBy() ? "System" : entity.getCreateBy()   );
+
+            String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
+            entity.setCreateBy( currentUser );
 
             entity.setPassword(bcryptEncoder.encode(entity.getPassword()));
 
