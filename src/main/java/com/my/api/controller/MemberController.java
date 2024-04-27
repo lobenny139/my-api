@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,9 +32,6 @@ public class MemberController {
     @Autowired(required=true)
     @Qualifier("memberService")
     IMemberService service;
-
-    @Autowired
-    private PasswordEncoder bcryptEncoder;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -88,11 +84,11 @@ public class MemberController {
 //          @ApiResponse(code=409, message="資料衝突")
     })
     @DeleteMapping("/member/{account}")
-    public Member delete(
+    public void delete(
                             @ApiParam(required=true, value="請傳入物件(member)的 account")
                             @PathVariable String account) throws Exception {
         try{
-            return getService().getEntityByAccount(account);
+            getService().deleteEntityByAccount(account);
         }catch(EntityNotFoundException e){
             //404
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -170,7 +166,7 @@ public class MemberController {
             String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
             entity.setCreateBy( currentUser );
 
-            entity.setPassword(bcryptEncoder.encode(entity.getPassword()));
+//            entity.setPassword(bcryptEncoder.encode(entity.getPassword()));
 
             return getService().createEntity(entity);
         }catch(EntityNotFoundException e){
