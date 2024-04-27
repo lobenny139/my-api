@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 		// config@my-db-service
 		com.my.db.config.EntityServiceConfig.class,
+
 		//config@redis
 		com.my.redis.config.RedisConfig.class,
 		com.my.redis.config.RedisServiceConfig.class,
@@ -42,9 +43,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		// service@my-redis-service
 		"com.my.redis.service.provider"
 
-
-		// father class table access service@my-db-access-tool
-//		"com.my.db.access.tool"
 })
 
 @EnableJpaRepositories(
