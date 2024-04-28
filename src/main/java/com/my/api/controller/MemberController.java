@@ -5,11 +5,11 @@ import com.my.db.exception.*;
 import com.my.db.service.IMemberService;
 import com.my.jwt.JwtTokenUtil;
 import io.swagger.annotations.*;
-import lombok.Delegate;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
+import javax.servlet.http.HttpSession;
 
 
 @Getter
@@ -35,7 +34,6 @@ public class MemberController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
 
     @ApiOperation(value="取出一物件(Member)")
     @ApiResponses(value={
@@ -84,8 +82,11 @@ public class MemberController {
     })
     @PutMapping("/member/{account}/activate")
     public Member activate(
-            @ApiParam(required=true, value="請傳入物件(member)的 account")
-            @PathVariable String account) throws Exception {
+                            @ApiParam(required=true, value="請傳入物件(member)的 account")
+                            @PathVariable String account,
+                            HttpServletRequest request) throws Exception {
+        String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
+        request.getSession().setAttribute("currentUser", currentUser);
         try{
             getService().adjustEntityStatusByAccount(account, 1);
             return getService().getEntityByAccount(account);
@@ -122,8 +123,12 @@ public class MemberController {
     })
     @PutMapping("/member/{account}/deactivate")
     public void deactivate(
-            @ApiParam(required=true, value="請傳入物件(member)的 account")
-            @PathVariable String account) throws Exception {
+                            @ApiParam(required=true, value="請傳入物件(member)的 account")
+                            @PathVariable String account,
+                            HttpServletRequest request) throws Exception {
+        String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
+        request.getSession().setAttribute("currentUser", currentUser);
+
         try{
             getService().adjustEntityStatusByAccount(account, 0);
         }catch(EntityNotFoundException e){
@@ -236,12 +241,12 @@ public class MemberController {
                             @ApiParam(required=true, value="請傳入物件(Member)的 JSON 格式")
                             @RequestBody(required=true) Member entity,
                             HttpServletRequest request) throws Exception {
+        String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
+        request.getSession().setAttribute("currentUser", currentUser);
         try {
-            String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
-            entity.setCreateBy( currentUser );
-
+//            String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
+//            entity.setCreateBy( currentUser );
 //            entity.setPassword(bcryptEncoder.encode(entity.getPassword()));
-
             return getService().createEntity(entity);
         }catch(EntityNotFoundException e){
             //404
@@ -282,9 +287,11 @@ public class MemberController {
                             @ApiParam(required=true, value="請傳入物件(member)的 JSON 格式")
                             @RequestBody(required=true) Member entity,
                             HttpServletRequest request) {
+        String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
+        request.getSession().setAttribute("currentUser", currentUser);
         try{
-            String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
-            entity.setUpdateBy(currentUser);
+//            String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
+//            entity.setUpdateBy(currentUser);
             return getService().updateEntityByAccount(account, entity);
         }catch(EntityNotFoundException e){
             //404
