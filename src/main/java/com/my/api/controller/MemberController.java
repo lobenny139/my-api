@@ -74,6 +74,80 @@ public class MemberController {
         }
     }
 
+    @ApiOperation(value="啟用一物件(Member)")
+    @ApiResponses(value={
+            @ApiResponse(code=200, message="請求成功"),
+            @ApiResponse(code=400, message="請求失敗"),
+            @ApiResponse(code=401, message="無法授權"),
+            @ApiResponse(code=404, message="找不到資料")
+//          @ApiResponse(code=409, message="資料衝突")
+    })
+    @PutMapping("/member/{account}/activate")
+    public Member activate(
+            @ApiParam(required=true, value="請傳入物件(member)的 account")
+            @PathVariable String account) throws Exception {
+        try{
+            getService().adjustEntityStatusByAccount(account, 1);
+            return getService().getEntityByAccount(account);
+        }catch(EntityNotFoundException e){
+            //404
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(DataException e) {
+            //409
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(DuplicatedException e){
+            //409
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(SQLGrammerConflictException e){
+            //406
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+        }catch(UnSupportException e){
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @ApiOperation(value="停用一物件(Member)")
+    @ApiResponses(value={
+            @ApiResponse(code=200, message="請求成功"),
+            @ApiResponse(code=400, message="請求失敗"),
+            @ApiResponse(code=401, message="無法授權"),
+            @ApiResponse(code=404, message="找不到資料")
+//          @ApiResponse(code=409, message="資料衝突")
+    })
+    @PutMapping("/member/{account}/deactivate")
+    public void deactivate(
+            @ApiParam(required=true, value="請傳入物件(member)的 account")
+            @PathVariable String account) throws Exception {
+        try{
+            getService().adjustEntityStatusByAccount(account, 0);
+        }catch(EntityNotFoundException e){
+            //404
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(DataException e) {
+            //409
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(DuplicatedException e){
+            //409
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(SQLGrammerConflictException e){
+            //406
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+        }catch(UnSupportException e){
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 
     @ApiOperation(value="刪除一物件(Member)")
     @ApiResponses(value={
