@@ -130,7 +130,7 @@ public class MemberController {
         request.getSession().setAttribute("currentUser", currentUser);
 
         try{
-            getService().adjustEntityStatusByAccount(account, 0);
+            getService().updateEntityStatusByAccount(account, 0);
         }catch(EntityNotFoundException e){
             //404
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
