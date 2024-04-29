@@ -88,7 +88,7 @@ public class MemberController {
         String currentUser = getJwtTokenUtil().getUsernameFromToken( request.getHeader("Authorization") );
         request.getSession().setAttribute("currentUser", currentUser);
         try{
-            getService().adjustEntityStatusByAccount(account, 1);
+            getService().updateEntityStatusByAccount(account, 1);
             return getService().getEntityByAccount(account);
         }catch(EntityNotFoundException e){
             //404
