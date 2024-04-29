@@ -26,7 +26,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		// controller@local
 		"com.my.api.controller",
 
-		// aop@local
+		// controller aop@local
 		"com.my.api.aop",
 
 		//Jwt@local
@@ -37,10 +37,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 		// aop@my-db-service
 		"com.my.db.service.aop",
-		// table access service@my-db-service
+		// db access service@my-db-service
 		"com.my.db.service.provider" ,
 
-		// service@my-redis-service
+		// redis service@my-redis-service
 		"com.my.redis.service.provider"
 
 })
