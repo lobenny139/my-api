@@ -38,11 +38,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		// aop@my-db-service
 		"com.my.db.service.aop",
 		// db access service@my-db-service
-		"com.my.db.service.provider" ,
+		"com.my.db.service.provider",
 
 		// redis service@my-redis-service
 		"com.my.redis.service.provider"
-
 })
 
 @EnableJpaRepositories(
