@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		//config@redis
 		com.my.redis.config.RedisConfig.class,
 		com.my.redis.config.RedisServiceConfig.class,
-		com.my.redis.config.RedisMessageConfig.class
+		com.my.redis.config.RedisMessageConfig.class,
 
 })
 
@@ -51,8 +51,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EntityScan(basePackages = {
 		// entity@my-db-entity
-		"com.my.db.entity"
+		"com.my.db.entity",
 })
+
 @SpringBootApplication
 public class DemoApplication {
 	public static void main(String[] args) {
