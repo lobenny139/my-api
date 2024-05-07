@@ -57,7 +57,6 @@
     <!-- 級別依次為【從高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
     <logger name="org.hibernate.SQL" additivity="false" >
         <level value="DEBUG" />
-<!--        <appender-ref ref="CONSOLE" />-->
         <appender-ref ref="ASYNC" />
     </logger>
 
