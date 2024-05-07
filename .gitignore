@@ -11,3 +11,4 @@ target/maven-archiver/pom.properties
 target/classes/logback-spring.xml
 target/classes/application.properties
 *.iml
+/target
