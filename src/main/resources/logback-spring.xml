@@ -42,21 +42,14 @@
     <!-- com.appley為根包，也就是隻要是發生在這個根包下面的所有日誌操作行為的許可權都是DEBUG -->
     <!-- 級別依次為【從高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
 <!--    <logger name="org.hibernate.SQL" additivity="false" >-->
-    <logger name="org.hibernateL" additivity="false" >
+    <logger name="org.hibernate" additivity="false" >
         <level value="DEBUG" />
         <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" />
     </logger>
 
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" additivity="false" level="TRACE" >
         <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" />
-    </logger>
 
-    <logger name="org.springframework.cache" additivity="false" level="TRACE">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" />
     </logger>
 
 </configuration>
-
