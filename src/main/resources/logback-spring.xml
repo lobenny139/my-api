@@ -1,55 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- <configuration> 的 scan 設定為 true 使配置改變時可以重新載入配置文件 -->
 <configuration debug="false">
-    <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
-    <!-- 控制台输出 -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+
+    <property name="LOG_HOME" value="D:/logs" />
+
+    <!-- 引用 Spring Boot 對 Logback 的預設配置 -->
+    <!-- <include resource="org/springframework/boot/logging/logback/base.xml" /> -->
+
+    <!-- 設定印出 console 時的相關設定 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- 按照每天生成日志文件 -->
+    <!-- 設定輸出 file 時的相關設定 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 透過不同啟動環境，來決定要使用哪一份 springProfile -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--日志文件输出的文件名-->
             <FileNamePattern>${LOG_HOME}/my/backend.log.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <!--日志文件保留天数-->
-            <MaxHistory>30</MaxHistory>
+            <!-- , 60天的日志周期，最大不能超过20GB -->
+            <!--            <maxFileSize>100MB</maxFileSize>-->
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
         </rollingPolicy>
+        <!-- 設定寫入 Log File 的格式設定 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
-        <!--日志文件最大的大小-->
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>10MB</MaxFileSize>
-        </triggeringPolicy>
     </appender>
 
+    <!-- 透過 AsyncAppender 使 Log 可以以非同步的方式輸出，以增加寫入效能 -->
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 修改 queue 的大小，這個執會影響非同步寫入時的效能 -->
+        <queueSize>512</queueSize>
+        <!-- 載入名字為 FILE 的 <appender> -->
         <appender-ref ref="FILE" />
     </appender>
 
     <!-- 日志输出级别 -->
+    <!-- 配置載入位置 -->
+    <!-- 設定 ROOT 的 Log 等級，避免這個值改為 DEBUG，否則會印出許多啟動容器時不必要的資訊 -->
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
+        <!-- 載入名字為 CONSOLE 的 <appender> -->
+        <appender-ref ref="CONSOLE" />
+        <!-- 載入名字為 ASYNC 的 <appender> -->
         <appender-ref ref="ASYNC" />
     </root>
 
     <!-- 指定專案中某個包，當有日誌操作行為時的日誌記錄級別 -->
     <!-- com.appley為根包，也就是隻要是發生在這個根包下面的所有日誌操作行為的許可權都是DEBUG -->
     <!-- 級別依次為【從高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
-<!--    <logger name="org.hibernate.SQL" additivity="false" >-->
-    <logger name="org.hibernate" additivity="false" >
+    <logger name="org.hibernate.SQL" additivity="false" >
         <level value="DEBUG" />
-        <appender-ref ref="FILE" />
+<!--        <appender-ref ref="CONSOLE" />-->
+        <appender-ref ref="ASYNC" />
     </logger>
 
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" additivity="false" level="TRACE" >
-        <appender-ref ref="FILE" />
-
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC" />
     </logger>
 
 </configuration>
